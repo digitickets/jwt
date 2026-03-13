@@ -1,6 +1,7 @@
 {
     "name": "digitickets/jwt",
     "description": "Provides classes for creating and parsing JWTs.",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "DigiTickets\\Jwt\\": "src/"
