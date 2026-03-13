@@ -1,6 +1,7 @@
 # digitickets/jwt
 
 A small library for creating and parsing signed JWTs.
+Supports PHP 7.3 and above, and uses the `firebase/php-jwt` library under the hood.
 
 ## Installation
 
@@ -10,7 +11,7 @@ composer require digitickets/jwt
 
 ## Usage
 
-### 1. Implement `JwtConfigInterface`
+### 1. Create a config implementing `JwtConfigInterface`
 
 Create a config class that provides the signing key and default token lifetime:
 
@@ -39,14 +40,14 @@ use DigiTickets\Jwt\JwtClaims;
 use DigiTickets\Jwt\JwtData;
 use DigiTickets\Jwt\JwtFactory;
 
-$config = new MyJwtConfig();
-
 $token = JwtFactory::createJwt(
-    $config,
+    new MyJwtConfig(), // The config created in step 1.
     new JwtData([
         JwtClaims::AUDIENCE => 'my-service',
     ])
 );
+
+var_dump($token); // string(153) "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NzM0MzU5NjEsImV4cCI6MTc3MzQzNjAyMSwiYXVkIjoibXktc2VydmljZSJ9.7Y8Sr7RL9w453TuSpC-j5u8ZicbN6QSUtInu6xc2VpA"
 ```
 
 Pass an explicit expiry in minutes as the third argument, or `0` for a non-expiring token:
@@ -69,6 +70,19 @@ $data = JwtParser::parseJwt($config, $token);
 $data->get('aud');           // 'my-service'
 $data->getIssuedAt();        // DateTime
 $data->getExpirationTime();  // DateTime
+
+print_r($data);
+// Output:
+// DigiTickets\Jwt\JwtData Object
+// (
+//    [data:DigiTickets\Jwt\JwtData:private] => Array
+//        (
+//            [iat] => 1773435961
+//            [exp] => 1773436021
+//            [aud] => my-service
+//        )
+//
+// )
 ```
 
 Throws a `Firebase\JWT` exception if the token is invalid, expired, or has a bad signature.
@@ -82,7 +96,3 @@ the correct PHP version.
 composer install
 composer test
 ```
-
-## Requirements
-
-- PHP >= 7.3
